@@ -1,3 +1,4 @@
+target/**
 *.war
 *.ear
 *.class
@@ -17,6 +18,7 @@ local.properties
 .settings/
 .loadpath
 
-.externalTookBuilders/
+.externalToolBuilders/
 
 *.launch
+/.metadata/
