@@ -90,12 +90,12 @@ public class NumberGuesserHW {
 
 	private void saveLevel() {
 		try (FileWriter fw = new FileWriter(saveFile)) {
-			fw.write("" + level);// here we need to convert it to a String to record correctly
+			fw.write("" + level + "" + strikes + "" + number);// here we need to convert it to a String to record correctly
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}     
 
 	private boolean loadLevel() {
 		File file = new File(saveFile);
@@ -107,8 +107,14 @@ public class NumberGuesserHW {
 				int _level = reader.nextInt();
 				if (_level > 1) {
 					level = _level;
-					break;
 				}
+            int _strikes = reader.nextInt();
+            if (_strikes > 0) {
+               strikes = _strikes;
+            }
+            int _number = reader.nextInt();
+            number = _number;
+            break;
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -118,17 +124,17 @@ public class NumberGuesserHW {
 			return false;
 		}
 		return level > 1;
-	}
+	}   
 
 	void run() {
 		try (Scanner input = new Scanner(System.in);) {
-			System.out.println("Welcome to Number Guesser 4.0!");
+			System.out.println("Welcome to Number Guesser HW");
 			System.out.println("I'll ask you to guess a number between a range, and you'll have " + maxStrikes
 					+ " attempts to guess.");
-			if (loadLevel()) {
-				System.out.println("Successfully loaded level " + level + " let's continue then");
+            System.out.println("Successfully loaded level " + level + " let's continue then");
+            System.out.println("You left with " + strikes + " strikes");
 			}
-			number = getNumber(level);
+			//number = getNumber(level);
 			isRunning = true;
 			while (input.hasNext()) {
 				String message = input.nextLine();
@@ -139,8 +145,7 @@ public class NumberGuesserHW {
 				int guess = getGuess(message);
 				processGuess(guess);
 			}
-
-		} catch (Exception e) {
+         catch (Exception e2) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
