@@ -129,11 +129,11 @@ public class NumberGuesserHW {
 	void run() {
 		try (Scanner input = new Scanner(System.in);) {
 			System.out.println("Welcome to Number Guesser HW");
-			System.out.println("I'll ask you to guess a number between a range, and you'll have " + maxStrikes
-					+ " attempts to guess.");
-            System.out.println("Successfully loaded level " + level + " let's continue then");
-            System.out.println("You left with " + strikes + " strikes");
-			}
+			System.out.println("I'll ask you to guess a number between a range, and you'll have " + maxStrikes + " attempts to guess.");
+         if(loadLevel()){      
+         System.out.println("Successfully loaded level " + level + " let's continue then");
+         System.out.println("You left with " + strikes + " strikes");
+         }
 			//number = getNumber(level);
 			isRunning = true;
 			while (input.hasNext()) {
@@ -145,7 +145,7 @@ public class NumberGuesserHW {
 				int guess = getGuess(message);
 				processGuess(guess);
 			}
-         catch (Exception e2) {
+         }catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
