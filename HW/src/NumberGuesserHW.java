@@ -68,11 +68,13 @@ public class NumberGuesserHW {
 			} else {
 				int remainder = maxStrikes - strikes;
 				System.out.println("You have " + remainder + "/" + maxStrikes + " attempts remaining");
-				if (guess > number) {
-					System.out.println("Lower");
-				} else if (guess < number) {
-					System.out.println("Higher");
-				}
+				if(remainder <= 3){
+               if (guess > number) {
+					   System.out.println("Lower");
+				   } else if (guess < number) {
+					   System.out.println("Higher");
+				   }
+            }
 			}
 		}
 	}
