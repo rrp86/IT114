@@ -2,7 +2,7 @@ public class RecursionLoop
 {
    public static void main(String[] args)
    {
-      int num = 10;
+      int num = 20;
       int sum = 0;
       int count = 0;
       
