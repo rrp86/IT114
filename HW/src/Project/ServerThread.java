@@ -4,23 +4,40 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import utils.Debug;
-
+//part 4
 public class ServerThread extends Thread {
 	private Socket client;
 	private ObjectInputStream in;// from client
 	private ObjectOutputStream out;// to client
 	private boolean isRunning = false;
-	private SocketServer server;// ref to our server so we can call methods on it
-	// more easily
+	private Room currentRoom;// what room we are in, should be lobby by default
 
-	public ServerThread(Socket myClient, SocketServer server) throws IOException {
+	protected synchronized Room getCurrentRoom() {
+		return currentRoom;
+	}
+
+	protected synchronized void setCurrentRoom(Room room) {
+		if (room != null) {
+			currentRoom = room;
+		} else {
+			Debug.log("Passed in room was null, this shouldn't happen");
+		}
+	}
+
+	public ServerThread(Socket myClient, Room room) throws IOException {
 		this.client = myClient;
-		this.server = server;
+		this.currentRoom = room;
 		out = new ObjectOutputStream(client.getOutputStream());
 		in = new ObjectInputStream(client.getInputStream());
 	}
 
-	public boolean send(String message) {
+	/***
+	 * Sends the message to the client represented by this ServerThread
+	 * 
+	 * @param message
+	 * @return
+	 */
+	protected boolean send(String message) {
 		// added a boolean so we can see if the send was successful
 		try {
 			out.writeObject(message);
@@ -46,7 +63,7 @@ public class ServerThread extends Thread {
 				// keep this one as sysout otherwise if we turn of Debug.log we'll not see
 				// messages
 				System.out.println("Received from client: " + fromClient);
-				server.broadcast(fromClient, this.getId());
+				currentRoom.sendMessage(this, fromClient);
 			} // close while loop
 		} catch (Exception e) {
 			// happens when client disconnects
@@ -60,8 +77,9 @@ public class ServerThread extends Thread {
 	}
 
 	private void cleanup() {
-		if (server != null) {
-			server.disconnect(this);
+		if (currentRoom != null) {
+			Debug.log(getName() + " removing self from room " + currentRoom.getName());
+			currentRoom.removeClient(this);
 		}
 		if (in != null) {
 			try {
