@@ -2,30 +2,33 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import utils.Debug;
-//part 3
+//part 4
 public class SocketServer {
 	int port = 3000;
 	public static boolean isRunning = false;
-	private List<ServerThread> clients = new ArrayList<ServerThread>();
+	private List<Room> rooms = new ArrayList<Room>();
+	private Room lobby;// here for convenience
 
 	private void start(int port) {
 		this.port = port;
 		Debug.log("Waiting for client");
 		try (ServerSocket serverSocket = new ServerSocket(port);) {
 			isRunning = true;
+			// create a lobby on start
+			lobby = new Room("Lobby", this);
+			rooms.add(lobby);
 			while (SocketServer.isRunning) {
 				try {
 					Socket client = serverSocket.accept();
 					Debug.log("Client connecting...");
 					// Server thread is the server's representation of the client
-					ServerThread thread = new ServerThread(client, this);
+					ServerThread thread = new ServerThread(client, lobby);
 					thread.start();
-					// add client thread to list of clients
-					clients.add(thread);
+					// add client thread to our room's list of clients
+					lobby.addClient(thread);
 					Debug.log("Client added to clients pool");
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -45,30 +48,64 @@ public class SocketServer {
 		}
 	}
 
-	protected synchronized void disconnect(ServerThread client) {
-		long id = client.getId();
-		clients.remove(client);
-		broadcast("disconnected", id);
+	protected Room getLobby() {
+		return lobby;
 	}
 
-	// Broadcast given message to everyone connected
-	public synchronized void broadcast(String message, long id) {
-		// let's temporarily use the thread id as the client identifier to
-		// show in all client's chat. This isn't good practice since it's subject to
-		// change as clients connect/disconnect
-		message = String.format("User[%d]: %s", id, message);
-		// end temp identifier
-
-		// loop over clients and send out the message
-		Iterator<ServerThread> it = clients.iterator();
-		while (it.hasNext()) {
-			ServerThread client = it.next();
-			boolean wasSuccessful = client.send(message);
-			if (!wasSuccessful) {
-				Debug.log("Removing disconnected client from list");
-				it.remove();
-				broadcast("Disconnected", id);
+	/***
+	 * Helper function to check if room exists by case insensitive name
+	 * 
+	 * @param roomName The name of the room to look for
+	 * @return matched Room or null if not found
+	 */
+	private Room getRoom(String roomName) {
+		for (int i = 0, l = rooms.size(); i < l; i++) {
+			if (rooms.get(i).getName().equalsIgnoreCase(roomName)) {
+				return rooms.get(i);
 			}
+		}
+		return null;
+	}
+
+	/***
+	 * Attempts to join a room by name. Will remove client from old room and add
+	 * them to the new room.
+	 * 
+	 * @param roomName The desired room to join
+	 * @param client   The client moving rooms
+	 * @return true if reassign worked; false if new room doesn't exist
+	 */
+	protected synchronized boolean joinRoom(String roomName, ServerThread client) {
+		Room newRoom = getRoom(roomName);
+		Room oldRoom = client.getCurrentRoom();
+		if (newRoom != null) {
+			if (oldRoom != null) {
+				Debug.log(client.getName() + " leaving room " + oldRoom.getName());
+				oldRoom.removeClient(client);
+			}
+			Debug.log(client.getName() + " joining room " + newRoom.getName());
+			newRoom.addClient(client);
+			return true;
+		}
+		return false;
+	}
+
+	/***
+	 * Attempts to create a room with given name if it doesn't exist already.
+	 * 
+	 * @param roomName The desired room to create
+	 * @return true if it was created and false if it exists
+	 */
+	protected synchronized boolean createNewRoom(String roomName) {
+		if (getRoom(roomName) != null) {
+			// TODO can't create room
+			Debug.log("Room already exists");
+			return false;
+		} else {
+			Room room = new Room(roomName, this);
+			rooms.add(room);
+			Debug.log("Created new room: " + roomName);
+			return true;
 		}
 	}
 
