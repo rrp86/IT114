@@ -3,18 +3,23 @@ package server;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Room implements AutoCloseable {
 	private static SocketServer server;// used to refer to accessible server functions
+	private int roll;
 	private String name;
 	private final static Logger log = Logger.getLogger(Room.class.getName());
+	Random rand = new Random();
 
 	// Commands
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
+	private final static String ROLL = "roll";
+	private final static String FLIP = "flip";
 
 	public Room(String name) {
 		this.name = name;
@@ -82,6 +87,20 @@ public class Room implements AutoCloseable {
 		server.joinRoom(room, client);
 	}
 
+	public String rollMethod(ServerThread client) {
+		roll = rand.nextInt(7) + 1;
+		return "Roll: " + roll;
+	}
+
+	public String flipMethod(ServerThread client) {
+		int flip = rand.nextInt(2);
+		if (flip == 0) {
+			return "Heads";
+		} else {
+			return "Tails";
+		}
+	}
+
 	protected void joinLobby(ServerThread client) {
 		server.joinLobby(client);
 	}
@@ -106,6 +125,8 @@ public class Room implements AutoCloseable {
 					command = command.toLowerCase();
 				}
 				String roomName;
+				String rollMethod;
+				String flipMethod;
 				switch (command) {
 				case CREATE_ROOM:
 					roomName = comm2[1];
@@ -119,8 +140,19 @@ public class Room implements AutoCloseable {
 					joinRoom(roomName, client);
 					wasCommand = true;
 					break;
+				case ROLL:
+					rollMethod = comm2[0];
+					rollMethod(client);
+					wasCommand = true;
+					break;
+				case FLIP:
+					flipMethod = comm2[0];
+					flipMethod(client);
+					wasCommand = true;
+					break;
 				}
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
