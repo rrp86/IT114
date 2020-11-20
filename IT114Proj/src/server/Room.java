@@ -197,6 +197,10 @@ public class Room implements AutoCloseable {
 		}
 	}
 
+	public List<String> getRooms(String search) {
+		return server.getRooms(search);
+	}
+
 	/***
 	 * Will attempt to migrate any remaining clients to the Lobby room. Will then
 	 * set references to null and should be eligible for garbage collection
@@ -219,5 +223,4 @@ public class Room implements AutoCloseable {
 		name = null;
 		// should be eligible for garbage collection now
 	}
-
 }
