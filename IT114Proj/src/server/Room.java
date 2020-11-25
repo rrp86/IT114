@@ -1,8 +1,11 @@
 package server;
 
+<<<<<<< HEAD
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+<<<<<<< HEAD
 //import client.Chair;
 import client.Player;
 import client.Ticket;
@@ -22,6 +26,11 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 	 */
 	private static final long serialVersionUID = -2396927244891036163L;
 	private static SocketServer server;// used to refer to accessible server functions
+=======
+public class Room implements AutoCloseable {
+	private static SocketServer server;// used to refer to accessible server functions
+	private int roll;
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	private String name;
 	private final static Logger log = Logger.getLogger(Room.class.getName());
 	Random rand = new Random();
@@ -30,6 +39,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
+<<<<<<< HEAD
 	private final static String READY = "ready";
 	private List<ClientPlayer> clients = new ArrayList<ClientPlayer>();
 	static Dimension gameAreaSize = new Dimension(800, 800);
@@ -46,6 +56,13 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		this.name = name;
 		// set this for BaseGamePanel to NOT draw since it's server-side
 		isServer = true;
+=======
+	private final static String ROLL = "roll";
+	private final static String FLIP = "flip";
+
+	public Room(String name) {
+		this.name = name;
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	}
 
 	public static void setServer(SocketServer server) {
@@ -56,6 +73,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		return name;
 	}
 
+<<<<<<< HEAD
 	private static Point getRandomStartPosition() {
 		Point startPos = new Point();
 		startPos.x = (int) (Math.random() * gameAreaSize.width);
@@ -259,10 +277,25 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				if (messageSent) {
 					messageSent = client.sendPosition(c.client.getClientName(), c.player.getPosition());
 				}
+=======
+	private List<ServerThread> clients = new ArrayList<ServerThread>();
+
+	protected synchronized void addClient(ServerThread client) {
+		client.setCurrentRoom(this);
+		if (clients.indexOf(client) > -1) {
+			log.log(Level.INFO, "Attempting to add a client that already exists");
+		} else {
+			clients.add(client);
+			if (client.getClientName() != null) {
+				client.sendClearList();
+				sendConnectionStatus(client, true, "joined the room " + getName());
+				updateClientList(client);
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			}
 		}
 	}
 
+<<<<<<< HEAD
 	/**
 	 * Syncs the existing clients in the room with our newly connected client
 	 * 
@@ -274,11 +307,20 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			ClientPlayer c = iter.next();
 			if (c.client != client) {
 				client.sendConnectionStatus(c.client.getClientName(), true, null);
+=======
+	private void updateClientList(ServerThread client) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			if (c != client) {
+				boolean messageSent = client.sendConnectionStatus(c.getClientName(), true, null);
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			}
 		}
 	}
 
 	protected synchronized void removeClient(ServerThread client) {
+<<<<<<< HEAD
 		Iterator<ClientPlayer> iter = clients.iterator();
 		while (iter.hasNext()) {
 			ClientPlayer c = iter.next();
@@ -288,6 +330,11 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			}
 		}
 		if (clients.size() > 0) {
+=======
+		clients.remove(client);
+		if (clients.size() > 0) {
+			// sendMessage(client, "left the room");
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			sendConnectionStatus(client, false, "left the room " + getName());
 		} else {
 			cleanupEmptyRoom();
@@ -312,6 +359,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		server.joinRoom(room, client);
 	}
 
+<<<<<<< HEAD
 	protected void joinLobby(ServerThread client) {
 		server.joinLobby(client);
 	}
@@ -404,6 +452,24 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			}
 		}
 		return null;
+=======
+	public String rollMethod(ServerThread client) {
+		roll = rand.nextInt(7) + 1;
+		return "Roll: " + roll;
+	}
+
+	public String flipMethod(ServerThread client) {
+		int flip = rand.nextInt(2);
+		if (flip == 0) {
+			return "Heads";
+		} else {
+			return "Tails";
+		}
+	}
+
+	protected void joinLobby(ServerThread client) {
+		server.joinLobby(client);
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	}
 
 	/***
@@ -426,31 +492,71 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 					command = command.toLowerCase();
 				}
 				String roomName;
+<<<<<<< HEAD
 				ClientPlayer cp = null;
 				switch (command) {
 				case CREATE_ROOM:
 					roomName = comm2[1];
 					createRoom(roomName, client);
+=======
+				String rollMethod;
+				String flipMethod;
+				switch (command) {
+				case CREATE_ROOM:
+					roomName = comm2[1];
+					if (server.createNewRoom(roomName)) {
+						joinRoom(roomName, client);
+					}
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 					break;
 				case JOIN_ROOM:
 					roomName = comm2[1];
 					joinRoom(roomName, client);
 					break;
+<<<<<<< HEAD
 				default:
 					// not a command, let's fix this function from eating messages
+=======
+				case ROLL:
+					response = "Rolling the die...";
+					// rollMethod = comm2[0];
+					// rollMethod(client);
+					break;
+				case FLIP:
+					response = "flipping the coin...";
+					// flipMethod = comm2[0];
+					// flipMethod(client);
+					break;
+				default:
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 					response = message;
 					break;
 				}
 			} else {
+<<<<<<< HEAD
 				// not a command, let's fix this function from eating messages
 				response = message;
 			}
+=======
+				if (response.contains("*")) {
+					response = response.replace("*", "<b>");
+					for (int i = 0; i < response.length(); i++) {
+						if (response.charAt[i] = "*") {
+							response.replace("*", "</b>");
+						}
+					}
+				}
+				response = message;
+			}
+
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return response;
 	}
 
+<<<<<<< HEAD
 	/*
 	 * private void readyCheck() { Iterator<ClientPlayer> iter = clients.iterator();
 	 * int total = clients.size(); int ready = 0; while (iter.hasNext()) {
@@ -469,6 +575,17 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			if (!messageSent) {
 				iter.remove();
 				log.log(Level.INFO, "Removed client " + c.client.getId());
+=======
+	// TODO changed from string to ServerThread
+	protected void sendConnectionStatus(ServerThread client, boolean isConnect, String message) {
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread c = iter.next();
+			boolean messageSent = c.sendConnectionStatus(client.getClientName(), isConnect, message);
+			if (!messageSent) {
+				iter.remove();
+				log.log(Level.INFO, "Removed client " + c.getId());
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			}
 		}
 	}
@@ -489,6 +606,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			return;
 		}
 		message = resp;
+<<<<<<< HEAD
 		Iterator<ClientPlayer> iter = clients.iterator();
 		while (iter.hasNext()) {
 			ClientPlayer client = iter.next();
@@ -565,6 +683,15 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			if (!messageSent) {
 				iter.remove();
 				log.log(Level.INFO, "Removed client " + client.client.getId());
+=======
+		Iterator<ServerThread> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ServerThread client = iter.next();
+			boolean messageSent = client.send(sender.getClientName(), message);
+			if (!messageSent) {
+				iter.remove();
+				log.log(Level.INFO, "Removed client " + client.getId());
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			}
 		}
 	}
@@ -582,17 +709,26 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		int clientCount = clients.size();
 		if (clientCount > 0) {
 			log.log(Level.INFO, "Migrating " + clients.size() + " to Lobby");
+<<<<<<< HEAD
 			Iterator<ClientPlayer> iter = clients.iterator();
 			Room lobby = server.getLobby();
 			while (iter.hasNext()) {
 				ClientPlayer client = iter.next();
 				lobby.addClient(client.client);
+=======
+			Iterator<ServerThread> iter = clients.iterator();
+			Room lobby = server.getLobby();
+			while (iter.hasNext()) {
+				ServerThread client = iter.next();
+				lobby.addClient(client);
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 				iter.remove();
 			}
 			log.log(Level.INFO, "Done Migrating " + clients.size() + " to Lobby");
 		}
 		server.cleanupRoom(this);
 		name = null;
+<<<<<<< HEAD
 		isRunning = false;
 		// should be eligible for garbage collection now
 	}
@@ -676,4 +812,8 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		// no listeners either since server side receives no input
 	}
 
+=======
+		// should be eligible for garbage collection now
+	}
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 }

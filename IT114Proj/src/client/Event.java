@@ -16,6 +16,7 @@ public interface Event {
 	void onSyncPosition(String clientName, Point position);
 
 	void onGetRoom(String roomName);
+<<<<<<< HEAD
 
 	void onResize(Point p);
 
@@ -26,4 +27,6 @@ public interface Event {
 	void onGetTicket(String ticketName, Point position, Point dimension, String holder);// boolean isAvailable);
 
 	void onResetTickets();
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 }

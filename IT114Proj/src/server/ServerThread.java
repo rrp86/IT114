@@ -1,7 +1,10 @@
 package server;
 
+<<<<<<< HEAD
 import java.awt.Dimension;
 import java.awt.Point;
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -80,6 +83,7 @@ public class ServerThread extends Thread {
 		return sendPayload(payload);
 	}
 
+<<<<<<< HEAD
 	protected boolean sendDirection(String clientName, Point dir) {
 		Payload payload = new Payload();
 		payload.setPayloadType(PayloadType.SYNC_DIRECTION);
@@ -95,6 +99,19 @@ public class ServerThread extends Thread {
 		payload.setPoint(pos);
 		return sendPayload(payload);
 	}
+=======
+	/*
+	 * protected boolean sendDirection(String clientName, Point dir) { Payload
+	 * payload = new Payload(); payload.setPayloadType(PayloadType.SYNC_DIRECTION);
+	 * payload.setClientName(clientName); payload.setPoint(dir); return
+	 * sendPayload(payload); }
+	 * 
+	 * protected boolean sendPosition(String clientName, Point pos) { Payload
+	 * payload = new Payload(); payload.setPayloadType(PayloadType.SYNC_POSITION);
+	 * payload.setClientName(clientName); payload.setPoint(pos); return
+	 * sendPayload(payload); }
+	 */
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 
 	protected boolean sendConnectionStatus(String clientName, boolean isConnect, String message) {
 		Payload payload = new Payload();
@@ -123,6 +140,7 @@ public class ServerThread extends Thread {
 		return sendPayload(payload);
 	}
 
+<<<<<<< HEAD
 	protected boolean sendChair(String chairName, Point chairPosition, Dimension chairSize, String sitter) {
 		Payload payload = new Payload();
 		payload.setPayloadType(PayloadType.SYNC_CHAIR);
@@ -161,6 +179,8 @@ public class ServerThread extends Thread {
 		return sendPayload(payload);
 	}
 
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	private boolean sendPayload(Payload p) {
 		try {
 			out.writeObject(p);
@@ -197,6 +217,7 @@ public class ServerThread extends Thread {
 		case MESSAGE:
 			currentRoom.sendMessage(this, p.getMessage());
 			break;
+<<<<<<< HEAD
 		case CLEAR_PLAYERS:
 			// we currently don't need to do anything since the UI/Client won't be sending
 			// this
@@ -208,6 +229,15 @@ public class ServerThread extends Thread {
 			// In my sample client will not be sharing their position
 			// this will be handled 100% by the server
 			break;
+=======
+		/*
+		 * case CLEAR_PLAYERS: // we currently don't need to do anything since the
+		 * UI/Client won't be sending // this break; case SYNC_DIRECTION:
+		 * currentRoom.sendDirectionSync(this, p.getPoint()); break; case SYNC_POSITION:
+		 * // In my sample client will not be sharing their position // this will be
+		 * handled 100% by the server break;
+		 */
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		case GET_ROOMS:
 			// far from efficient but it works for example sake
 			List<String> roomNames = currentRoom.getRooms(p.getMessage());
@@ -222,6 +252,7 @@ public class ServerThread extends Thread {
 				}
 			}
 			break;
+<<<<<<< HEAD
 		case CREATE_ROOM:
 			currentRoom.createRoom(p.getMessage(), this);
 			break;
@@ -231,6 +262,11 @@ public class ServerThread extends Thread {
 		case PICKUP_TICKET:
 			currentRoom.doPickup(this);
 			break;
+=======
+		case JOIN_ROOM:
+			currentRoom.joinRoom(p.getMessage(), this);
+			break;
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		default:
 			log.log(Level.INFO, "Unhandled payload on server: " + p);
 			break;

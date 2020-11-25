@@ -33,6 +33,11 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
+<<<<<<< HEAD
+=======
+import server.RoomsPanel;
+
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 public class ClientUI extends JFrame implements Event {
 	/**
 	 * 
@@ -53,19 +58,33 @@ public class ClientUI extends JFrame implements Event {
 	public ClientUI(String title) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		menu = new JMenuBar();
+<<<<<<< HEAD
 		JMenu roomsMenu = new JMenu("Actions");
 		JMenuItem roomsSearch = new JMenuItem("Rooms");
 		roomsSearch.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+=======
+		JMenu roomsMenu = new JMenu("Rooms");
+		JMenuItem roomsSearch = new JMenuItem("Search");
+		roomsSearch.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("clicked");
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 				goToPanel("rooms");
 			}
 
 		});
 		roomsMenu.add(roomsSearch);
 		menu.add(roomsMenu);
+<<<<<<< HEAD
 		windowSize.width *= .85;
 		windowSize.height *= .85;
+=======
+		windowSize.width *= .8;
+		windowSize.height *= .8;
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		setPreferredSize(windowSize);
 		setSize(windowSize);// This is needed for setLocationRelativeTo()
 		setLocationRelativeTo(null);
@@ -115,6 +134,7 @@ public class ClientUI extends JFrame implements Event {
 			}
 
 		});
+<<<<<<< HEAD
 		// TODO set focus later
 		host.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "sendAction");
 		host.getActionMap().put("sendAction", new AbstractAction() {
@@ -122,6 +142,8 @@ public class ClientUI extends JFrame implements Event {
 				button.doClick();
 			}
 		});
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		panel.add(button);
 		this.add(panel, "login");
 	}
@@ -155,6 +177,7 @@ public class ClientUI extends JFrame implements Event {
 			}
 
 		});
+<<<<<<< HEAD
 		// TODO set focus later
 		username.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "sendAction");
 		username.getActionMap().put("sendAction", new AbstractAction() {
@@ -162,6 +185,8 @@ public class ClientUI extends JFrame implements Event {
 				button.doClick();
 			}
 		});
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		panel.add(button);
 		this.add(panel, "details");
 	}
@@ -176,12 +201,15 @@ public class ClientUI extends JFrame implements Event {
 		JScrollPane scroll = new JScrollPane(textArea);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+<<<<<<< HEAD
 		// updated to be 30% of screen width
 		Dimension d = new Dimension((int) (windowSize.width * .3), windowSize.height);
 		scroll.setPreferredSize(d);
 		scroll.setMinimumSize(d);
 		scroll.setMaximumSize(d);
 
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		panel.add(scroll, BorderLayout.CENTER);
 
 		JPanel input = new JPanel();
@@ -220,11 +248,17 @@ public class ClientUI extends JFrame implements Event {
 		JScrollPane scroll = new JScrollPane(userPanel);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+<<<<<<< HEAD
 		// updated to be 10% of screen width
 		Dimension d = new Dimension((int) (windowSize.width * .1), windowSize.height);
 		scroll.setPreferredSize(d);
 		scroll.setMinimumSize(d);
 		scroll.setMaximumSize(d);
+=======
+
+		Dimension d = new Dimension(100, windowSize.height);
+		scroll.setPreferredSize(d);
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 
 		textArea.getParent().getParent().getParent().add(scroll, BorderLayout.EAST);
 	}
@@ -289,8 +323,12 @@ public class ClientUI extends JFrame implements Event {
 		entry.setEditable(false);
 		// entry.setLayout(null);
 		entry.setText(str);
+<<<<<<< HEAD
 		int areaWidth = textArea.getSize().width;
 		Dimension d = new Dimension(areaWidth, calcHeightForText(str));
+=======
+		Dimension d = new Dimension(textArea.getSize().width, calcHeightForText(str));
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		// attempt to lock all dimensions
 		entry.setMinimumSize(d);
 		entry.setPreferredSize(d);
@@ -298,12 +336,16 @@ public class ClientUI extends JFrame implements Event {
 		textArea.add(entry);
 
 		pack();
+<<<<<<< HEAD
 		resizeTexts();
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		// System.out.println(entry.getSize());
 		JScrollBar sb = ((JScrollPane) textArea.getParent().getParent()).getVerticalScrollBar();
 		sb.setValue(sb.getMaximum());
 	}
 
+<<<<<<< HEAD
 	void resizeTexts() {
 		// attempts to fix sizing of messages when text area gets resized
 		// sort of works so good enough for my example
@@ -326,11 +368,17 @@ public class ClientUI extends JFrame implements Event {
 		}
 	}
 
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	void next() {
 		card.next(this.getContentPane());
 	}
 
+<<<<<<< HEAD
 	void previous() {
+=======
+	public void previous() {
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		card.previous(this.getContentPane());
 	}
 
@@ -342,12 +390,18 @@ public class ClientUI extends JFrame implements Event {
 			SocketClient.INSTANCE.sendGetRooms(null);
 			break;
 		default:
+<<<<<<< HEAD
 
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			// no need to react
 			break;
 		}
 		card.show(this.getContentPane(), panel);
+<<<<<<< HEAD
 
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	}
 
 	void connect(String host, String port) throws IOException {
@@ -433,6 +487,7 @@ public class ClientUI extends JFrame implements Event {
 			pack();
 		}
 	}
+<<<<<<< HEAD
 
 	@Override
 	public void onResize(Point p) {
@@ -464,4 +519,6 @@ public class ClientUI extends JFrame implements Event {
 		// TODO Auto-generated method stub
 
 	}
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 }

@@ -48,7 +48,10 @@ public enum SocketClient {
 
 	private void sendPayload(Payload p) {
 		try {
+<<<<<<< HEAD
 			System.out.println("Sending: " + p);
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			out.writeObject(p);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -69,7 +72,10 @@ public enum SocketClient {
 					Payload fromServer;
 					// while we're connected, listen for Payloads from server
 					while (!server.isClosed() && (fromServer = (Payload) in.readObject()) != null) {
+<<<<<<< HEAD
 						System.out.println("Received from SERVER: " + fromServer);
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 						processPayload(fromServer);
 					}
 				} catch (Exception e) {
@@ -158,6 +164,7 @@ public enum SocketClient {
 		}
 	}
 
+<<<<<<< HEAD
 	private void sendSize(Point p) {
 		Iterator<Event> iter = events.iterator();
 		while (iter.hasNext()) {
@@ -209,6 +216,8 @@ public enum SocketClient {
 		}
 	}
 
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 	/***
 	 * Determine any special logic for different PayloadTypes
 	 * 
@@ -226,6 +235,7 @@ public enum SocketClient {
 		case MESSAGE:
 			sendOnMessage(p.getClientName(), p.getMessage());
 			break;
+<<<<<<< HEAD
 		case CLEAR_PLAYERS:
 			sendOnChangeRoom();
 			break;
@@ -235,10 +245,18 @@ public enum SocketClient {
 		case SYNC_POSITION:
 			sendSyncPosition(p.getClientName(), p.getPoint());
 			break;
+=======
+		/*
+		 * case CLEAR_PLAYERS: sendOnChangeRoom(); break; case SYNC_DIRECTION:
+		 * sendSyncDirection(p.getClientName(), p.getPoint()); break; case
+		 * SYNC_POSITION: sendSyncPosition(p.getClientName(), p.getPoint()); break;
+		 */
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		case GET_ROOMS:
 			// reply from ServerThread
 			sendRoom(p.getMessage());
 			break;
+<<<<<<< HEAD
 		case SYNC_GAME_SIZE:
 			sendSize(p.getPoint());
 			break;
@@ -259,6 +277,8 @@ public enum SocketClient {
 				sendResetTickets();
 			}
 			break;
+=======
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		default:
 			log.log(Level.WARNING, "unhandled payload on client" + p);
 			break;
@@ -332,6 +352,7 @@ public enum SocketClient {
 	 * 
 	 * @param dir
 	 */
+<<<<<<< HEAD
 	public void syncDirection(Point dir) {
 		Payload p = new Payload();
 		// no need to add clientName here since ServerThread has the info
@@ -346,15 +367,30 @@ public enum SocketClient {
 		p.setPayloadType(PayloadType.PICKUP_TICKET);
 		sendPayload(p);
 	}
+=======
+	/*
+	 * public void syncDirection(Point dir) { Payload p = new Payload(); // no need
+	 * to add clientName here since ServerThread has the info // so let's save a few
+	 * bytes p.setPayloadType(PayloadType.SYNC_DIRECTION); p.setPoint(dir);
+	 * sendPayload(p); }
+	 */
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 
 	/**
 	 * we won't be syncing position from the client since our server is the one
 	 * that'll do it so creating this unused method as a reminder not to use/make it
 	 */
 	@Deprecated
+<<<<<<< HEAD
 	public void syncPosition() {
 		log.log(Level.SEVERE, "My sample doesn't use this");
 	}
+=======
+	/*
+	 * public void syncPosition() { log.log(Level.SEVERE,
+	 * "My sample doesn't use this"); }
+	 */
+>>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 
 	public boolean start() throws IOException {
 		if (server == null) {
