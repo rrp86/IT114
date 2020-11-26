@@ -1,6 +1,6 @@
+
 package client;
 
-<<<<<<< HEAD
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -22,27 +22,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
-=======
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Consumer;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-
-import client.ClientUI;
-import client.SocketClient;
-
->>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 public class RoomsPanel extends JPanel {
 
 	/**
@@ -61,7 +40,6 @@ public class RoomsPanel extends JPanel {
 		container.setAlignmentY(TOP_ALIGNMENT);
 		scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-<<<<<<< HEAD
 		this.setLayout(new BorderLayout());
 
 		// part 2 - looks like I added the below before to a different commit/branch
@@ -105,10 +83,6 @@ public class RoomsPanel extends JPanel {
 		back.setMaximumSize(d);
 		back.setSize(d);
 
-=======
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		JButton back = new JButton("Go Back");
->>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 		back.addActionListener(new ActionListener() {
 
 			@Override
@@ -116,7 +90,6 @@ public class RoomsPanel extends JPanel {
 				((ClientUI) parent).previous();
 			}
 		});
-<<<<<<< HEAD
 		JPanel searchPanel = new JPanel();
 		searchPanel.setLayout(new BorderLayout());
 		searchPanel.add(searchLabel, BorderLayout.NORTH);
@@ -131,10 +104,6 @@ public class RoomsPanel extends JPanel {
 		this.add(tabbedPane, BorderLayout.NORTH);
 		this.add(back, BorderLayout.SOUTH);
 		this.add(container, BorderLayout.CENTER);
-=======
-		this.add(back);
-		this.add(container);
->>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 
 	}
 
@@ -185,54 +154,4 @@ public class RoomsPanel extends JPanel {
 		SocketClient.INSTANCE.sendJoinRoom(room);
 	}
 
-<<<<<<< HEAD
-=======
-}
-
-class RoomListItem extends JPanel implements AutoCloseable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8340982098822138336L;
-	private JTextField roomName;
-	private JButton joinButton;
-
-	/**
-	 * We pass the room name, and a callback for when the room is selected
-	 * 
-	 * @param room   - Name of room to show on the UI
-	 * @param onJoin - Callback to trigger when button is clicked
-	 */
-	public RoomListItem(String room, Consumer<String> onJoin) {
-		// TODO see below links regarding Consumer
-		// https://medium.com/swlh/understanding-java-8s-consumer-supplier-predicate-and-function-c1889b9423d
-		// https://mkyong.com/java8/java-8-consumer-examples/
-		this.setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-		roomName = new JTextField(room);
-		roomName.setEditable(false);
-		joinButton = new JButton("Join");
-		joinButton.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// invokes the callback
-				onJoin.accept(roomName.getText());
-			}
-		});
-		this.add(roomName);
-		this.add(joinButton);
-	}
-
-	@Override
-	public void close() {
-		for (ActionListener al : joinButton.getActionListeners()) {
-			joinButton.removeActionListener(al);
-		}
-		this.removeAll();
-	}
-
-	public String getRoomName() {
-		return roomName.getText();
-	}
->>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 }

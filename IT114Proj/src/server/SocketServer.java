@@ -38,11 +38,7 @@ public class SocketServer {
 					// create a dummy room until we get further client details
 					// technically once a user fully joins this lobby will be destroyed
 					// but we'll track it in an array so we can attempt to clean it up just in case
-<<<<<<< HEAD
 					Room prelobby = new Room(PRELOBBY, true);// , this);
-=======
-					Room prelobby = new Room(PRELOBBY);// , this);
->>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 					prelobby.addClient(thread);
 					isolatedPrelobbies.add(prelobby);
 
@@ -125,10 +121,6 @@ public class SocketServer {
 				roomNames.add(r.getName());
 				i++;
 			}
-<<<<<<< HEAD
-=======
-
->>>>>>> ad6539c337c0f7fbed6b72a17dafb4e21fa039e9
 			if (i > max) {
 				break;
 			}
