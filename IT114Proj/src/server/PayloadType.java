@@ -1,4 +1,3 @@
-
 package server;
 
 public enum PayloadType {

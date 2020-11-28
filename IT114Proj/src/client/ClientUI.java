@@ -1,4 +1,3 @@
-
 package client;
 
 import java.awt.BorderLayout;
@@ -46,7 +45,7 @@ public class ClientUI extends JFrame implements Event {
 	List<User> users = new ArrayList<User>();
 	private final static Logger log = Logger.getLogger(ClientUI.class.getName());
 	Dimension windowSize = Toolkit.getDefaultToolkit().getScreenSize();
-	// GamePanel game;
+	GamePanel game;
 	String username;
 	RoomsPanel roomsPanel;
 	JMenuBar menu;
@@ -145,10 +144,10 @@ public class ClientUI extends JFrame implements Event {
 					// need external ref since "this" context is the action event, not ClientUI
 					self.username = name;
 					// this order matters
-					// createDrawingPanel();
+					createDrawingPanel();
 					pack();
 					self.setTitle(self.getTitle() + " - " + self.username);
-					// game.setPlayerName(self.username);
+					game.setPlayerName(self.username);
 					SocketClient.INSTANCE.setUsername(self.username);
 
 					self.next();
@@ -230,14 +229,14 @@ public class ClientUI extends JFrame implements Event {
 		textArea.getParent().getParent().getParent().add(scroll, BorderLayout.EAST);
 	}
 
-	/*
-	 * void createDrawingPanel() { game = new GamePanel(); game.setPreferredSize(new
-	 * Dimension((int) (windowSize.width * .6), windowSize.height));
-	 * textArea.getParent().getParent().getParent().add(game, BorderLayout.WEST);
-	 * 
-	 * // TODO unsubscribe when done
-	 * SocketClient.INSTANCE.registerCallbackListener(game); }
-	 */
+	void createDrawingPanel() {
+		game = new GamePanel();
+		game.setPreferredSize(new Dimension((int) (windowSize.width * .6), windowSize.height));
+		textArea.getParent().getParent().getParent().add(game, BorderLayout.WEST);
+
+		// TODO unsubscribe when done
+		SocketClient.INSTANCE.registerCallbackListener(game);
+	}
 
 	void createRoomsPanel() {
 		roomsPanel = new RoomsPanel(this);

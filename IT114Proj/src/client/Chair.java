@@ -8,44 +8,36 @@ import java.io.Serializable;
 
 import core.GameObject;
 
-public class Ticket extends GameObject implements Serializable {
+public class Chair extends GameObject implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6088251166673414031L;
-	Color color = Color.DARK_GRAY;
-	Point nameOffset = new Point(0, -5);
-	Player holder = null;
+	Color color = Color.LIGHT_GRAY;
+	Point nameOffset = new Point(-10, -5);
+	Player seated = null;
 
-	public Ticket(String name) {
+	public Chair(String name) {
 		setName(name);
 	}
 
 	public boolean isAvailable() {
-		return holder == null;
+		return seated == null;
 	}
 
 	public void setPlayer(Player p) {
-		holder = p;
+		seated = p;
 	}
 
-	public Player getHolder() {
-		return holder;
+	public Player getSitter() {
+		return seated;
 	}
 
-	public String getHolderName() {
-		if (holder == null) {
+	public String getSitterName() {
+		if (seated == null) {
 			return null;
 		}
-		return holder.getName();
-	}
-
-	@Override
-	public void setSize(int x, int y) {
-		super.setSize(x, y);
-		// math used are just magic numbers, played with it until it looked ok
-		nameOffset.x = (int) (x * .1);
-		nameOffset.y = (int) (y / 1.5f);
+		return seated.getName();
 	}
 
 	/**
@@ -57,16 +49,11 @@ public class Ticket extends GameObject implements Serializable {
 		// super
 		if (super.draw(g)) {
 			g.setColor(color);
-			if (holder != null) {
-				// TODO this fixes it!
-				// position = holder.getPosition();
-				position.x = holder.getPosition().x;
-				position.y = holder.getPosition().y;
-			}
-			g.fillRect(position.x, position.y, size.width, size.height);
+			g.drawRect(position.x, position.y, size.width, size.height);
 			g.setColor(Color.WHITE);
 			g.setFont(new Font("Monospaced", Font.PLAIN, 12));
-			g.drawString(getName(), position.x + nameOffset.x, position.y + nameOffset.y);
+			g.drawString((isAvailable() ? "Available" : "Taken: " + getSitterName()), position.x + nameOffset.x,
+					position.y + nameOffset.y);
 		}
 		return true;
 	}
