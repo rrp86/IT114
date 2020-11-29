@@ -10,7 +10,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import client.Chair;
+//import client.Chair;
 import client.Player;
 import client.Ticket;
 import core.BaseGamePanel;
@@ -33,7 +33,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 	private final static String READY = "ready";
 	private List<ClientPlayer> clients = new ArrayList<ClientPlayer>();
 	static Dimension gameAreaSize = new Dimension(800, 800);
-	private List<Chair> chairs = new ArrayList<Chair>();
+	// private List<Chair> chairs = new ArrayList<Chair>();
 	private List<Ticket> tickets = new ArrayList<Ticket>();
 
 	public Room(String name, boolean delayStart) {
@@ -63,62 +63,35 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		return startPos;
 	}
 
-	private void generateSeats() {
-		int players = clients.size();
-		final int chairs = Helpers.getNumberBetween(players, (int) (players * 1.5));
-		final Dimension chairSize = new Dimension(25, 25);
-		final float paddingLeft = .1f;
-		final float paddingRight = .9f;
-		final float paddingTop = .1f;
-		final float chairSpacing = chairSize.height * 1.75f;
-		final int chairHalfWidth = (int) (chairSize.width * .5);
-		final int screenWidth = gameAreaSize.width;
-		final int screenHeight = gameAreaSize.height;
-		for (int i = 0; i < chairs; i++) {
-			Chair chair = new Chair("Chair " + (i + 1));
-			Point chairPosition = new Point();
-			if (i % 2 == 0) {
-				chairPosition.x = (int) ((screenWidth * paddingRight) - chairHalfWidth);
-			} else {
-				chairPosition.x = (int) (screenWidth * paddingLeft);
-			}
-			chairPosition.y = (int) ((screenHeight * paddingTop) + (chairSpacing * (i / 2)));
-			chair.setPosition(chairPosition);
-			chair.setSize(chairSize.width, chairSize.height);
-			chair.setPlayer(null);
-			this.chairs.add(chair);
-		}
-
-	}
-
-	private void syncChairs() {
-		// fairest way seems to be syncing 1 chair at a time across all players
-		Iterator<Chair> chairIter = chairs.iterator();
-		while (chairIter.hasNext()) {
-			Chair chair = chairIter.next();
-			if (chair != null) {
-				syncChair(chair);
-			}
-		}
-	}
-
-	private void resetChairs() {
-		Iterator<ClientPlayer> iter = clients.iterator();
-		while (iter.hasNext()) {
-			ClientPlayer cp = iter.next();
-			if (cp != null) {
-				if (cp.player.isSitting()) {
-					cp.player.unsit();
-				}
-				cp.client.sendChair(null, null, null, null);
-			}
-		}
-		Iterator<Chair> citer = chairs.iterator();
-		while (citer.hasNext()) {
-			citer.next();
-			citer.remove();
-		}
-	}
+	/*
+	 * private void generateSeats() { int players = clients.size(); final int chairs
+	 * = Helpers.getNumberBetween(players, (int) (players * 1.5)); final Dimension
+	 * chairSize = new Dimension(25, 25); final float paddingLeft = .1f; final float
+	 * paddingRight = .9f; final float paddingTop = .1f; final float chairSpacing =
+	 * chairSize.height * 1.75f; final int chairHalfWidth = (int) (chairSize.width *
+	 * .5); final int screenWidth = gameAreaSize.width; final int screenHeight =
+	 * gameAreaSize.height; for (int i = 0; i < chairs; i++) { Chair chair = new
+	 * Chair("Chair " + (i + 1)); Point chairPosition = new Point(); if (i % 2 == 0)
+	 * { chairPosition.x = (int) ((screenWidth * paddingRight) - chairHalfWidth); }
+	 * else { chairPosition.x = (int) (screenWidth * paddingLeft); } chairPosition.y
+	 * = (int) ((screenHeight * paddingTop) + (chairSpacing * (i / 2)));
+	 * chair.setPosition(chairPosition); chair.setSize(chairSize.width,
+	 * chairSize.height); chair.setPlayer(null); this.chairs.add(chair); }
+	 * 
+	 * }
+	 * 
+	 * private void syncChairs() { // fairest way seems to be syncing 1 chair at a
+	 * time across all players Iterator<Chair> chairIter = chairs.iterator(); while
+	 * (chairIter.hasNext()) { Chair chair = chairIter.next(); if (chair != null) {
+	 * syncChair(chair); } } }
+	 * 
+	 * private void resetChairs() { Iterator<ClientPlayer> iter =
+	 * clients.iterator(); while (iter.hasNext()) { ClientPlayer cp = iter.next();
+	 * if (cp != null) { if (cp.player.isSitting()) { cp.player.unsit(); }
+	 * cp.client.sendChair(null, null, null, null); } } Iterator<Chair> citer =
+	 * chairs.iterator(); while (citer.hasNext()) { citer.next(); citer.remove(); }
+	 * }
+	 */
 
 	private void generateTickets() {
 		int players = clients.size() + 1;
@@ -191,18 +164,13 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		}
 	}
 
-	private void syncChair(Chair chair) {
-		if (chair != null) {
-			Iterator<ClientPlayer> iter = clients.iterator();
-			while (iter.hasNext()) {
-				ClientPlayer cp = iter.next();
-				if (cp != null) {
-					// changed to pass holder name
-					cp.client.sendChair(chair.getName(), chair.getPosition(), chair.getSize(), chair.getSitterName());
-				}
-			}
-		}
-	}
+	/*
+	 * private void syncChair(Chair chair) { if (chair != null) {
+	 * Iterator<ClientPlayer> iter = clients.iterator(); while (iter.hasNext()) {
+	 * ClientPlayer cp = iter.next(); if (cp != null) { // changed to pass holder
+	 * name cp.client.sendChair(chair.getName(), chair.getPosition(),
+	 * chair.getSize(), chair.getSitterName()); } } } }
+	 */
 
 	private void syncGameSize() {
 		Iterator<ClientPlayer> iter = clients.iterator();
@@ -353,30 +321,20 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		}
 	}
 
-	private boolean takeASeat(ClientPlayer cp) {
-		if (cp.player.hasTicket()) {
-			// check seats since we have a ticket in hand
-			Iterator<Chair> iter = chairs.iterator();
-			while (iter.hasNext()) {
-				Chair c = iter.next();
-				if (c != null && c.isAvailable()) {
-					int dist = (int) ((c.getSize().width * .5) + (cp.player.getSize().width * .5));
-					Point p = cp.player.getCenter();
-					Point chairp = c.getCenter();
-
-					if (chairp.distanceSq(p) <= (dist * dist)) {
-						// chair is within range, do the sit :)
-						c.setPlayer(cp.player);
-						cp.player.setChair(c);
-						syncChair(c);
-						return true;
-					}
-
-				}
-			}
-		}
-		return false;
-	}
+	/*
+	 * private boolean takeASeat(ClientPlayer cp) { if (cp.player.hasTicket()) { //
+	 * check seats since we have a ticket in hand Iterator<Chair> iter =
+	 * chairs.iterator(); while (iter.hasNext()) { Chair c = iter.next(); if (c !=
+	 * null && c.isAvailable()) { int dist = (int) ((c.getSize().width * .5) +
+	 * (cp.player.getSize().width * .5)); Point p = cp.player.getCenter(); Point
+	 * chairp = c.getCenter();
+	 * 
+	 * if (chairp.distanceSq(p) <= (dist * dist)) { // chair is within range, do the
+	 * sit :) c.setPlayer(cp.player); cp.player.setChair(c); syncChair(c); return
+	 * true; }
+	 * 
+	 * } } } return false; }
+	 */
 
 	protected synchronized void doPickup(ServerThread client) {
 		ClientPlayer cp = getCP(client);
@@ -388,10 +346,10 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				return;
 			}
 			cp.player.setLastAction(currentMs);
-			if (takeASeat(cp)) {
-				// we sat or are sitting, no need to do anything else
-				return;
-			}
+			// if (takeASeat(cp)) {
+			// we sat or are sitting, no need to do anything else
+			// return;
+			// }
 			Iterator<Ticket> iter = tickets.iterator();
 			Ticket currentlyHeld = cp.player.takeTicket();
 			String chName = null;
@@ -503,7 +461,8 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		if (message.indexOf("@@") > -1) {
 			String[] sentence = message.split("@@");
 			String bold = "";
-			for (int i = 0; i < sentence.length; i++) {
+			bold += sentence[0];
+			for (int i = 1; i < sentence.length; i++) {
 				if (i % 2 == 0) {
 					bold += sentence[i];
 				} else {
@@ -512,10 +471,12 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			}
 			response = bold;
 			// sendMessage(client, bold);
-		} else if (message.indexOf("%%") > -1) {
+		}
+		if (message.indexOf("%%") > -1) {
 			String[] sentence = message.split("%%");
 			String italics = "";
-			for (int i = 0; i < sentence.length; i++) {
+			italics += sentence[0];
+			for (int i = 1; i < sentence.length; i++) {
 				if (i % 2 == 0) {
 					italics += sentence[i];
 				} else {
@@ -524,10 +485,12 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			}
 			response = italics;
 			// sendMessage(client, italics);
-		} else if (message.indexOf("__") > -1) {
+		}
+		if (message.indexOf("__") > -1) {
 			String[] sentence = message.split("__");
 			String underline = "";
-			for (int i = 0; i < sentence.length; i++) {
+			underline += sentence[0];
+			for (int i = 1; i < sentence.length; i++) {
 				if (i % 2 == 0) {
 					underline += sentence[i];
 				} else {
@@ -536,6 +499,20 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 			}
 			response = underline;
 			// sendMessage(client, underline);
+		}
+		if (message.indexOf("--") > -1) {
+			String[] sentence = message.split("--");
+			String color = "";
+			color += sentence[0];
+			for (int i = 1; i < sentence.length; i++) {
+				if (i % 2 == 0) {
+					color += sentence[i];
+				} else {
+					color += "<p style=\"color:Red;\">" + sentence[i] + "</p>";
+				}
+			}
+			response = color;
+			// sendMessage(client, color);
 		}
 		return response;
 	}
@@ -550,14 +527,11 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				ready++;
 			}
 		}
-		if (ready >= total && chairs.size() == 0) {
+		if (ready >= total) {
 			// start
 			System.out.println("Everyone's ready, let's do this!");
-			resetChairs();
 			resetTickets();
-			generateSeats();
 			generateTickets();
-			syncChairs();
 			syncTickets();
 			sendSystemMessage("Let the games begin!");
 		}
