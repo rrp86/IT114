@@ -17,7 +17,7 @@ public class Player extends GameObject implements Serializable {
 	Color color = Color.RED;
 	Point nameOffset = new Point(0, 5);
 	Ticket ticket = null;
-	Chair chair = null;
+	// Chair chair = null;
 	boolean isReady = false;
 	long lastAction = -1L;
 
@@ -58,17 +58,13 @@ public class Player extends GameObject implements Serializable {
 		return t;
 	}
 
-	public void setChair(Chair c) {
-		chair = c;
-	}
-
-	public boolean isSitting() {
-		return chair != null;
-	}
-
-	public void unsit() {
-		chair = null;
-	}
+	/*
+	 * public void setChair(Chair c) { // chair = c; }
+	 * 
+	 * public boolean isSitting() { // return chair != null; }
+	 * 
+	 * public void unsit() { // chair = null; }
+	 */
 
 	/**
 	 * Gets called by the game engine to draw the current location/size
