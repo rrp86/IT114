@@ -30,7 +30,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 	private final static String COMMAND_TRIGGER = "/";
 	private final static String CREATE_ROOM = "createroom";
 	private final static String JOIN_ROOM = "joinroom";
-	private final static String READY = "ready";
+	// private final static String READY = "ready";
 	private List<ClientPlayer> clients = new ArrayList<ClientPlayer>();
 	static Dimension gameAreaSize = new Dimension(800, 800);
 	// private List<Chair> chairs = new ArrayList<Chair>();
@@ -437,14 +437,35 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				case "flip":
 					int toss = rand.nextInt(2);
 					if (toss == 1) {
-						sendMessage(client, "Flip: Heads");
+						// sendMessage(client, "Flip: Heads");
+						response = "<b color=green>Flip: Heads</b>";
 					} else {
-						sendMessage(client, "Flip: Tails");
+						// sendMessage(client, "Flip: Tails");
+						response = "<b color=green>Flip: Tails</b>";
 					}
 					break;
 				case "roll":
-					int face = rand.nextInt(7) + 1;
-					sendMessage(client, "Roll : " + face);
+					int face = rand.nextInt(6) + 1;
+					// sendMessage(client, "Roll : " + face);
+					response = "<b color=orange>Roll: " + face + "</b>";
+					break;
+				case "mute":
+					String muteClientName = client.getClientName().toLowerCase();
+					muteClientName = comm2[1];
+					client.addMute(muteClientName);
+					break;
+				case "unmute":
+					String unmuteClientName = client.getClientName().toLowerCase();
+					unmuteClientName = comm2[1];
+					client.removeMute(unmuteClientName);
+					break;
+				case "pm":
+					String preceiver = client.getClientName().toLowerCase();
+					preceiver = comm2[1];
+					List<String> pmlist = new ArrayList<String>();
+					pmlist.add(preceiver);
+					sendPrivateMessage(client, message, pmlist);
+					response = null;
 					break;
 				default:
 					// not a command, let's fix this function from eating messages
@@ -458,6 +479,7 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		if (message.indexOf("@@") > -1) {
 			String[] sentence = message.split("@@");
 			String bold = "";
@@ -508,11 +530,28 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				if (i % 2 == 0) {
 					color += sentence[i];
 				} else {
-					color += "<p style=\"color:Red;\">" + sentence[i] + "</p>";
+					color += "<font size=4 color=red>" + sentence[i] + "</font>";
 				}
 			}
 			response = color;
 			// sendMessage(client, color);
+		}
+		if (message.indexOf("@") > -1) {
+			String[] sentence = message.split("@");
+			String tag = "";
+			String foreign = "";
+			List<String> pmessage = new ArrayList<String>();
+			for (int i = 0; i < sentence.length; i++) {
+				if (sentence[i] != " ") {
+					tag += sentence[i];
+					foreign += sentence[i];
+					break;
+				} else {
+					tag += sentence[i];
+				}
+			}
+			pmessage.add(foreign);
+			sendPrivateMessage(client, message, pmessage);
 		}
 		return response;
 	}
@@ -568,10 +607,36 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		Iterator<ClientPlayer> iter = clients.iterator();
 		while (iter.hasNext()) {
 			ClientPlayer client = iter.next();
-			boolean messageSent = client.client.send(sender.getClientName(), message);
-			if (!messageSent) {
-				iter.remove();
-				log.log(Level.INFO, "Removed client " + client.client.getId());
+			if (!client.client.isMuted(sender.getClientName())) {
+				boolean messageSent = client.client.send(sender.getClientName(), message);
+				if (!messageSent) {
+					iter.remove();
+				}
+			} else {
+				boolean messageSent = client.client.send(sender.getClientName(),
+						"Muted sender. Message not delivered.");
+			}
+			log.log(Level.INFO, "Removed client " + client.client.getId());
+		}
+	}
+
+	protected void sendPrivateMessage(ServerThread sender, String message, List<String> pmlist) {
+		Iterator<ClientPlayer> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ClientPlayer client = iter.next();
+			if (pmlist.contains(client.client.getClientName())) {
+				if (!client.client.isMuted(sender.getClientName())) {
+					boolean messageSent = client.client.send(sender.getClientName(), message);
+					if (!messageSent) {
+						iter.remove();
+					}
+					break;
+				} else {
+					boolean messageSent = client.client.send(sender.getClientName(),
+							"Muted by recipient. Message blocked");
+					break;
+				}
+				// log.log(Level.INFO, "Removed client " + client.client.getId());
 			}
 		}
 	}
