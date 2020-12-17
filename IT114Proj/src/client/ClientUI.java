@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -33,6 +34,8 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 
+import server.ServerThread;
+
 public class ClientUI extends JFrame implements Event {
 	/**
 	 * 
@@ -49,6 +52,7 @@ public class ClientUI extends JFrame implements Event {
 	String username;
 	RoomsPanel roomsPanel;
 	JMenuBar menu;
+	ServerThread sender;
 
 	public ClientUI(String title) {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -364,6 +368,27 @@ public class ClientUI extends JFrame implements Event {
 		lock = userPanel.getSize();
 		userPanel.setMaximumSize(lock);
 		setVisible(true);
+	}
+
+	public void writeToExport(String filename, String text) {
+		try (FileWriter fw = new FileWriter(filename)) {
+			fw.write(text);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	void exportChat() {
+		StringBuilder sb = new StringBuilder();
+		Component[] comps = textArea.getComponents();
+		for (Component c : comps) {
+			JEditorPane j = (JEditorPane) c;
+			if (j != null) {
+				writeToExport("export.txt", j.getText() + System.lineSeparator());
+			}
+		}
+
+		// sb.toString();
 	}
 
 	@Override

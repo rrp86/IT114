@@ -3,6 +3,9 @@ package server;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -404,6 +407,16 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 		return null;
 	}
 
+	public void muteFile(String filename) {
+		File fileReference = new File(filename);
+		try {
+			fileReference.createNewFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	/***
 	 * Helper function to process messages to trigger different functionality.
 	 * 
@@ -453,11 +466,14 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 					String muteClientName = client.getClientName().toLowerCase();
 					muteClientName = comm2[1];
 					client.addMute(muteClientName);
+					sendMuteMessage(client, message);
+					muteExport("mute.txt", muteClientName);
 					break;
 				case "unmute":
 					String unmuteClientName = client.getClientName().toLowerCase();
 					unmuteClientName = comm2[1];
 					client.removeMute(unmuteClientName);
+					sendUnmuteMessage(client, message);
 					break;
 				case "pm":
 					String preceiver = client.getClientName().toLowerCase();
@@ -490,8 +506,9 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				} else {
 					bold += "<b>" + sentence[i] + "</b>";
 				}
+				System.out.println(sentence[i]);
 			}
-			response = bold;
+			message = bold;
 			// sendMessage(client, bold);
 		}
 		if (message.indexOf("%%") > -1) {
@@ -504,8 +521,9 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				} else {
 					italics += "<i>" + sentence[i] + "</i>";
 				}
+				System.out.println(sentence[i]);
 			}
-			response = italics;
+			message = italics;
 			// sendMessage(client, italics);
 		}
 		if (message.indexOf("__") > -1) {
@@ -518,8 +536,9 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				} else {
 					underline += "<u>" + sentence[i] + "</u>";
 				}
+				System.out.println(sentence[i]);
 			}
-			response = underline;
+			message = underline;
 			// sendMessage(client, underline);
 		}
 		if (message.indexOf("--") > -1) {
@@ -532,28 +551,23 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 				} else {
 					color += "<font size=4 color=red>" + sentence[i] + "</font>";
 				}
+				System.out.println(sentence[i]);
 			}
-			response = color;
+			message = color;
 			// sendMessage(client, color);
 		}
-		if (message.indexOf("@") > -1) {
-			String[] sentence = message.split("@");
-			String tag = "";
-			String foreign = "";
-			List<String> pmessage = new ArrayList<String>();
-			for (int i = 0; i < sentence.length; i++) {
-				if (sentence[i] != " ") {
-					tag += sentence[i];
-					foreign += sentence[i];
-					break;
-				} else {
-					tag += sentence[i];
-				}
-			}
-			pmessage.add(foreign);
-			sendPrivateMessage(client, message, pmessage);
-		}
 		return response;
+	}
+
+	private void muteExport(String filename, String muteList) {
+		try (FileWriter fw = new FileWriter(filename, true);) {
+			fw.write(System.lineSeparator());
+			fw.write(muteList);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	private void readyCheck() {
@@ -617,6 +631,40 @@ public class Room extends BaseGamePanel implements AutoCloseable {
 						"Muted sender. Message not delivered.");
 			}
 			log.log(Level.INFO, "Removed client " + client.client.getId());
+		}
+	}
+
+	protected void sendMuteMessage(ServerThread sender, String message) {
+		Iterator<ClientPlayer> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ClientPlayer client = iter.next();
+			if (!client.client.isMuted(sender.getClientName())) {
+				boolean messageSent = client.client.send(sender.getClientName(), "Muted by " + sender.getClientName());
+				if (!messageSent) {
+					iter.remove();
+				}
+				break;
+			} else {
+				boolean messageSent = client.client.send(sender.getClientName(), message);
+				break;
+			}
+			// log.log(Level.INFO, "Removed client " + client.client.getId());
+		}
+	}
+
+	protected void sendUnmuteMessage(ServerThread sender, String message) {
+		Iterator<ClientPlayer> iter = clients.iterator();
+		while (iter.hasNext()) {
+			ClientPlayer client = iter.next();
+			if (!client.client.isMuted(sender.getClientName())) {
+				boolean messageSent = client.client.send(sender.getClientName(),
+						"Unmuted by " + sender.getClientName());
+				if (!messageSent) {
+					iter.remove();
+				}
+				break;
+			}
+			// log.log(Level.INFO, "Removed client " + client.client.getId());
 		}
 	}
 
